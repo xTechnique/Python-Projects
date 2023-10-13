@@ -1,54 +1,34 @@
 import time
-from turtle import Turtle, Screen
+from turtle import Screen
+from player import Player
+from car_manager import CarManager
 from scoreboard import Scoreboard
-from paddle import Paddle
-from ball import Ball
-import time
 
-game_is_on = True
 screen = Screen()
-screen.setup(800, 600)
-screen.bgcolor("black")
-screen.title("pong")
-
-ball = Ball()
+screen.setup(width=600, height=600)
 screen.tracer(0)
-r_paddle = Paddle((350, 0))
-l_paddle = Paddle((-350, 0))
 scoreboard = Scoreboard()
+car = CarManager()
+p1 = Player()
+p1
 
 
-
+screen.onkeypress(p1.go_up, "Up")
 screen.listen()
-screen.onkeypress(r_paddle.go_up, "Up")
-screen.onkeypress(r_paddle.go_down, "Down")
-screen.onkeypress(l_paddle.go_up, "w")
-screen.onkeypress(l_paddle.go_down, "s")
-
+game_is_on = True
 while game_is_on:
-    time.sleep(ball.move_speed)
+    time.sleep(0.1)
     screen.update()
-    ball.move()
+    car.create_car()
+    car.move_cars()
 
-    if ball.ycor() > 280 or ball.ycor() < -280:
-        ball.bounce_y()
+    for cars in car.all_cars:
+        if cars.distance(p1) < 20:
+            game_is_on = False
 
-    if ball.distance(r_paddle) < 50 and ball.xcor() > 320 or ball.distance(l_paddle) < 50 and ball.xcor() < -320:
-        ball.bounce_x()
-
-
-    if ball.xcor() > 380:
-        ball.reset_position()
-        scoreboard.l_point()
-    if ball.xcor() < -380:
-        scoreboard.r_point()
-        ball.reset_position()
+    if p1.ycor() > 280:
+        p1.next_level()
+        car.car_level()
 
 
 
-
-
-
-
-
-screen.exitonclick()
